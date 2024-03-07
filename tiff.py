@@ -94,11 +94,22 @@ class TiffImage:
     def grid(self, row, column, padx, pady, columnspan=1):
         self.canvas.get_tk_widget().grid(row=row, column=column, padx=padx, pady=pady, columnspan=columnspan)
         
-    def change_src_image(self, src: str) -> None:
-        self.ax.clear()
-        self.ax.axis("off")
-        self.ax.imshow(get_tiff_image(src), cmap="gray", vmin=0, vmax=UINT_16_MAX)
-        self.canvas.draw()
+    def change_src_image(self, src: str, num: int = 0) -> None:
+        if num == 0:
+            self.ax.clear()
+            self.ax.axis("off")
+            self.ax.imshow(get_tiff_image(src), cmap="gray", vmin=0, vmax=UINT_16_MAX)
+            self.canvas.draw()
+        elif num == 1:
+            self.ax.clear()
+            self.ax.axis("off")
+            self.src1 = get_tiff_image(src)
+            self.subtract()
+        elif num == 2:
+            self.ax.clear()
+            self.ax.axis("off")
+            self.src2 = get_tiff_image(src)
+            self.subtract()
         
     def subtract(self, src1=None, src2=None, dx=None, dy=None):
         self.ax.clear()

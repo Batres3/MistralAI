@@ -41,10 +41,12 @@ def add_source_image_1(e):
     path = filedialog.askopenfilename(defaultextension=".tiff")
     label_image_1.config(text=path.split("MistralAI/")[-1])
     source_image_1.change_src_image(path)
+    main_image.change_src_image(path, 1)
 def add_source_image_2(e):
     path = filedialog.askopenfilename(defaultextension=".tiff")
     label_image_2.config(text=path.split("MistralAI/")[-1])
     source_image_2.change_src_image(path)
+    main_image.change_src_image(path, 2)
 
 label_image_1.bind('<Double-Button-1>', add_source_image_1)
 label_image_2.bind('<Double-Button-1>', add_source_image_2)
