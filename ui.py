@@ -6,7 +6,6 @@ from PIL import Image
 from tiff import TiffImage, shift_image, UINT_16_MAX
 
 
-
 root = tk.Tk()
 root.wm_title("Editor")
 
@@ -37,6 +36,21 @@ label_image_2 = tk.Label(master=source_frame, text=path.split("MistralAI/")[-1])
 label_image_2.grid(row=2, column=1, padx=5, pady=5)
 
 main_image = TiffImage(src=source_image_1, src2=source_image_2, master=right_frame)
+
+def arrow_pressed_callback(e):
+    if e.keysym == "Up":
+        main_image.subtract(dy=main_image.dy+1)
+    if e.keysym == "Down":
+        main_image.subtract(dy=main_image.dy-1)
+    if e.keysym == "Left":
+        main_image.subtract(dx=main_image.dx+1)
+    if e.keysym == "Right":
+        main_image.subtract(dx=main_image.dx-1)
+
+root.bind('<Left>', arrow_pressed_callback)
+root.bind('<Right>', arrow_pressed_callback)
+root.bind('<Up>', arrow_pressed_callback)
+root.bind('<Down>', arrow_pressed_callback)
 
 def add_source_image_1(e):
     path = filedialog.askopenfilename(defaultextension=".tiff")

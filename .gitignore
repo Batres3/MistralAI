@@ -1,5 +1,8 @@
+__pycache__/
 *.code-workspace
 *.pyc
 *.tiff
-*xlsx
+*.xlsx
+*.txt
+*.ipynb
 data/
