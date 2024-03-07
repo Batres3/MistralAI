@@ -58,20 +58,23 @@ class CustomToolbar(NavigationToolbar2Tk):
 
 
 class TiffImage:
-    def __init__(self, src: str, master, toolbar: bool = True, figsize: tuple[int, int] = (5, 4), whitespace: bool = True, src2 = None) -> None:
+    def __init__(self, src: str, master, toolbar: bool = True, figsize: tuple[int, int] = (5, 4), whitespace: bool = False, src2 = None) -> None:
         self.fig = Figure(figsize=figsize, dpi=100)
         self.ax = self.fig.add_subplot()
         self.pixels = None
 
+        self.canvas = FigureCanvasTkAgg(self.fig, master=master)  # A tk.DrawingArea.
+        self.bar = CustomToolbar(self.canvas, master, pack_toolbar=False, custom_save=self.save)
         if src2 is None:
             self.pixels = get_tiff_image(src)
             self.ax.imshow(self.pixels, cmap="gray", vmin=0, vmax=UINT_16_MAX)
             self.ax.axis("off")
+        else:
+            self.subtract(src.pixels, src2.pixels, 0, 0)
         
         if not whitespace:
             self.fig.tight_layout(pad=0)
 
-        self.canvas = FigureCanvasTkAgg(self.fig, master=master)  # A tk.DrawingArea.
         self.canvas.draw()
         self.canvas.mpl_connect("key_press_event", key_press_handler)
         
@@ -79,12 +82,9 @@ class TiffImage:
             return
 
         # pack_toolbar=False will make it easier to use a layout manager later on.
-        self.bar = CustomToolbar(self.canvas, master, pack_toolbar=False, custom_save=self.save)
         self.bar.save_figure()
         self.bar.update()
 
-        if src2 is not None:
-            self.subtract(src.pixels, src2.pixels, 0, 0)
         return
 
     def pack(self) -> None:

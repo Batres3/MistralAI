@@ -35,22 +35,7 @@ source_image_2.grid(row=1, column=1, padx=5, pady=5)
 label_image_2 = tk.Label(master=source_frame, text=path.split("MistralAI/")[-1])
 label_image_2.grid(row=2, column=1, padx=5, pady=5)
 
-main_image = TiffImage(src=source_image_1, src2=source_image_2, master=right_frame)
-
-def arrow_pressed_callback(e):
-    if e.keysym == "Up":
-        main_image.subtract(dy=main_image.dy+1)
-    if e.keysym == "Down":
-        main_image.subtract(dy=main_image.dy-1)
-    if e.keysym == "Left":
-        main_image.subtract(dx=main_image.dx+1)
-    if e.keysym == "Right":
-        main_image.subtract(dx=main_image.dx-1)
-
-root.bind('<Left>', arrow_pressed_callback)
-root.bind('<Right>', arrow_pressed_callback)
-root.bind('<Up>', arrow_pressed_callback)
-root.bind('<Down>', arrow_pressed_callback)
+main_image = TiffImage(src=source_image_1, src2=source_image_2, master=right_frame, figsize=(4, 4))
 
 def add_source_image_1(e):
     path = filedialog.askopenfilename(defaultextension=".tiff")
@@ -70,12 +55,34 @@ def slider_y(y):
     main_image.subtract(dy=np.int32(y))
 max_x, max_y = main_image.pixels.shape
 min_x, min_y = -max_x, -max_y
-dx_slider = tk.Scale(master=manipulation_frame, from_=min_x, to=max_x, orient=tk.HORIZONTAL, command=slider_x)
+dx = tk.Variable(value=0)
+dy = tk.Variable(value=0)
+dx_slider = tk.Scale(master=manipulation_frame, from_=min_x, to=max_x, orient=tk.HORIZONTAL, command=slider_x, variable=dx)
 dx_slider.grid(row=0, column=1, padx=5, pady=5)
-dy_slider = tk.Scale(master=manipulation_frame, from_=min_y, to=max_y, orient=tk.HORIZONTAL, command=slider_y)
+dy_slider = tk.Scale(master=manipulation_frame, from_=min_y, to=max_y, orient=tk.HORIZONTAL, command=slider_y, variable=dy)
 dy_slider.grid(row=1, column=1, padx=5, pady=5)
 save_button = tk.Button(master=manipulation_frame, text="Save", command=lambda: main_image.save())
 save_button.grid(row=2, column=1, padx=5, pady=5)
+
+def arrow_pressed_callback(e):
+    if e.keysym == "Up":
+        dy.set(dy.get()+1)
+        main_image.subtract(dy=dy.get())
+    if e.keysym == "Down":
+        dy.set(dy.get()-1)
+        main_image.subtract(dy=dy.get())
+    if e.keysym == "Left":
+        dx.set(dx.get()-1)
+        main_image.subtract(dx=dx.get())
+    if e.keysym == "Right":
+        dx.set(dx.get()+1)
+        main_image.subtract(dx=dx.get())
+
+root.bind('<Left>', arrow_pressed_callback)
+root.bind('<Right>', arrow_pressed_callback)
+root.bind('<Up>', arrow_pressed_callback)
+root.bind('<Down>', arrow_pressed_callback)
+
 
 dx_max = tk.StringVar(value=max_x)
 dy_max = tk.StringVar(value=max_y)
